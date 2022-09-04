@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\Action\IsSeparatorAvailableAction;
+use App\Services\TextProcessorService\Classes\FileProcessor;
 use App\Services\TextProcessorService\Classes\UserFromFile;
 use App\Services\TextProcessorService\SeparatorsEnum;
 use Illuminate\Console\Command;
@@ -36,10 +37,12 @@ class countAverageLineCount extends Command
             $this->error("Не корректный разделитель");
             return ;
         }
-        $this->info($sep->getValue());
-        $users = new UserFromFile($sep->getValue());
-        $users->getUserList();
-
+        $userProcessor = new UserFromFile($sep->getValue());
+        $users = $userProcessor->getUserList();
+        foreach($users as $user) {
+            $count = (new FileProcessor())->averageLineCountInFiles($user->files);
+            $this->info("{$user->name} have {$count} average lines");
+        }
 
     }
 }

@@ -32,7 +32,6 @@ class UserFromFile
                 $files = $this->getListByUserId($rowProperties[0]);
                 $userSelf = new UserSelf($rowProperties[0], $rowProperties[1], $files);
                 $this->userList[] = $userSelf;
-                var_dump($userSelf);
             });
         return $this->userList;
     }
