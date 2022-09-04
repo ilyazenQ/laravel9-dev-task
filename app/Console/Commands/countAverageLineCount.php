@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\Action\IsSeparatorAvailableAction;
+use App\Services\TextProcessorService\Classes\UserFromFile;
 use App\Services\TextProcessorService\SeparatorsEnum;
 use Illuminate\Console\Command;
 
@@ -36,6 +37,9 @@ class countAverageLineCount extends Command
             return ;
         }
         $this->info($sep->getValue());
-        return "its works";
+        $users = new UserFromFile($sep->getValue());
+        $users->getUserList();
+
+
     }
 }
