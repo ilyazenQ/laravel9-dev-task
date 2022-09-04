@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\Action\IsSeparatorAvailableAction;
+use App\Services\TextProcessorService\Classes\FileCounter;
 use App\Services\TextProcessorService\Classes\FileProcessor;
 use App\Services\TextProcessorService\Classes\UserFromFile;
 use App\Services\TextProcessorService\SeparatorsEnum;
@@ -40,7 +41,10 @@ class countAverageLineCount extends Command
         $userProcessor = new UserFromFile($sep->getValue());
         $users = $userProcessor->getUserList();
         foreach($users as $user) {
-            $count = (new FileProcessor())->averageLineCountInFiles($user->files);
+            $fileProcessor = new FileProcessor(
+                (new FileCounter())
+            );
+            $count = $fileProcessor->processor->getResult($user->files);
             $this->info("{$user->name} have {$count} average lines");
         }
 

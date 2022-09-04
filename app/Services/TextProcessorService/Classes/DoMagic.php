@@ -2,13 +2,16 @@
 
 namespace App\Services\TextProcessorService\Classes;
 
-class FileProcessor
+class DoMagic
 {
-
     public function __construct(
         public FileProcessorInterface $processor,
     )
     {
     }
 
+    public function handle()
+    {
+
+    }
 }

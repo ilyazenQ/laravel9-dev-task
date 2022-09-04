@@ -2,6 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Services\TextProcessorService\Classes\FileCounter;
+use App\Services\TextProcessorService\Classes\FileProcessor;
+use App\Services\TextProcessorService\Classes\FileReplacer;
+use App\Services\TextProcessorService\Classes\UserFromFile;
+use App\Services\TextProcessorService\SeparatorsEnum;
 use Illuminate\Console\Command;
 
 class replaceDates extends Command
@@ -11,7 +16,7 @@ class replaceDates extends Command
      *
      * @var string
      */
-    protected $signature = 'textProcessor:replace';
+    protected $signature = 'textProcessor:replace {sep}';
 
     /**
      * The console command description.
@@ -29,8 +34,19 @@ class replaceDates extends Command
      */
     public function handle()
     {
-        $this->info("works");
-
-        return "works too";
+        $sep = SeparatorsEnum::getCaseValue($this->argument('sep'));
+        if(!$sep->isExistInEnum()) {
+            $this->error("Не корректный разделитель");
+            return ;
+        }
+        $userProcessor = new UserFromFile($sep->getValue());
+        $users = $userProcessor->getUserList();
+        foreach($users as $user) {
+            $fileProcessor = new FileProcessor(
+                (new FileReplacer())
+            );
+            $count = $fileProcessor->processor->getResult($user->files);
+            $this->info("{$user->name} have {$count} replaces");
+        }
     }
 }
