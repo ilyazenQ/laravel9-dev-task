@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Services\Action\IsSeparatorAvailableAction;
+use App\Services\TextProcessorService\SeparatorsEnum;
 use Illuminate\Console\Command;
 
 class countAverageLineCount extends Command
@@ -28,7 +30,12 @@ class countAverageLineCount extends Command
      */
     public function handle()
     {
-        $this->info("works2");
+        $sep = SeparatorsEnum::getCaseValue($this->argument('sep'));
+        if(!$sep->isExistInEnum()) {
+            $this->error("Не корректный разделитель");
+            return ;
+        }
+        $this->info($sep->getValue());
         return "its works";
     }
 }
