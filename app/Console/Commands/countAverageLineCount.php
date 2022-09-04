@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\Action\IsSeparatorAvailableAction;
+use App\Services\TextProcessorService\Classes\DoMagic;
 use App\Services\TextProcessorService\Classes\FileCounter;
 use App\Services\TextProcessorService\Classes\FileProcessor;
 use App\Services\TextProcessorService\Classes\UserFromFile;
@@ -33,20 +34,13 @@ class countAverageLineCount extends Command
      */
     public function handle()
     {
-        $sep = SeparatorsEnum::getCaseValue($this->argument('sep'));
-        if(!$sep->isExistInEnum()) {
-            $this->error("Не корректный разделитель");
-            return ;
-        }
-        $userProcessor = new UserFromFile($sep->getValue());
-        $users = $userProcessor->getUserList();
-        foreach($users as $user) {
-            $fileProcessor = new FileProcessor(
-                (new FileCounter())
-            );
-            $count = $fileProcessor->processor->getResult($user->files);
-            $this->info("{$user->name} have {$count} average lines");
-        }
-
+        $this->info('Average counter start');
+        $sep = $this->argument('sep');
+        $magic = new DoMagic(
+            (new FileCounter()),
+            $sep
+        );
+        $magic->handle();
+        $this->info('Average counter done');
     }
 }

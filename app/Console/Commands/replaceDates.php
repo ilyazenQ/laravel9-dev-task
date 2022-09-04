@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\TextProcessorService\Classes\DoMagic;
 use App\Services\TextProcessorService\Classes\FileCounter;
 use App\Services\TextProcessorService\Classes\FileProcessor;
 use App\Services\TextProcessorService\Classes\FileReplacer;
@@ -34,19 +35,13 @@ class replaceDates extends Command
      */
     public function handle()
     {
-        $sep = SeparatorsEnum::getCaseValue($this->argument('sep'));
-        if(!$sep->isExistInEnum()) {
-            $this->error("Не корректный разделитель");
-            return ;
-        }
-        $userProcessor = new UserFromFile($sep->getValue());
-        $users = $userProcessor->getUserList();
-        foreach($users as $user) {
-            $fileProcessor = new FileProcessor(
-                (new FileReplacer())
-            );
-            $count = $fileProcessor->processor->getResult($user->files);
-            $this->info("{$user->name} have {$count} replaces");
-        }
+        $this->info('Replace dates start');
+        $sep = $this->argument('sep');
+        $magic = new DoMagic(
+            (new FileReplacer()),
+            $sep
+        );
+        $magic->handle();
+        $this->info('Replace dates done');
     }
 }
